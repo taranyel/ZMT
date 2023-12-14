@@ -1,0 +1,86 @@
+.add_message {
+    padding: 10px 10px 10px 20px;
+    font-size: 1.2em;
+    background-color: #D3CFD5;
+    width: 50%;
+    margin-left: 20px;
+}
+
+label {
+    width: 100%;
+}
+
+.add_field {
+    padding-bottom: 10px;
+}
+
+form {
+    width: 100%;
+}
+
+.add_title {
+    background-color: white;
+    text-decoration: none;
+    height: 30px;
+    width: 90%;
+}
+
+.add_content {
+    background-color: white;
+    display: flex;
+    width: 90%;
+    height: 250px;
+    margin-bottom: 5px;
+    max-width: 90%;
+    font-size: 1em;
+}
+
+.text_label {
+    display: flex;
+}
+
+.submit_message {
+    width: 70px;
+    height: 30px;
+    font-size: 1em;
+    background-color: #D3C9ED;
+    text-decoration: none;
+    color: black;
+    text-align: center;
+    border-radius: 15px;
+    border: 2px solid #6D5F93;
+    line-height: 20px;
+    font-family: "Gill Sans MT", sans-serif;
+    transition: 0.5s;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.submit_message:hover {
+    width: 75px;
+    background-color: #6D5F93;
+}
+
+.select {
+    border-radius: 10px;
+    height: 23px;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
+
+.message_response {
+    color: #7F1616;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.message_block {
+    padding: 10px;
+}
+
+.content {
+    height: unset;
+}

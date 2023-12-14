@@ -1,0 +1,47 @@
+.screen_sign_up {
+    height: 530px;
+    margin-top: 60px;
+    width: 680px;
+    box-shadow: 2px 2px 14px #010B0E;
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    padding-top: 5px;
+}
+
+.input__field {
+    padding-top: 20px;
+}
+
+.user_info_block {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.password_info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
+.password_info input{
+    width: 350px;
+}
+
+.password_info input:hover {
+    width: 360px;
+    margin-bottom: 0;
+}
+
+.data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+}
