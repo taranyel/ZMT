@@ -11,23 +11,17 @@ if (!isset($_GET["id_page"]) && !isset($_GET["offset"])) {
     $_GET["offset"] = 0;
 }
 
-$id_page = $_GET["id_page"];
-$current_offset = $_GET["offset"];
-
-validateDigitGetParam(strval($id_page));
-validateDigitGetParam(strval($current_offset));
+$id_page = validateIdPageParam(strval($_GET["id_page"]));
+$current_offset = validateOffsetParam(strval($_GET["offset"]));
 
 $offset = 2 * $current_offset;
 
-
-$data = getPageName($id_page);
-$name = mysqli_fetch_array($data)["name"];
+$name = getPageName($id_page);
 
 if ($current_offset == 0) {
     $_SESSION["amount_of_all_messages"] = getAmountOfAllMessagesByPage($id_page);
     $_SESSION["amount_of_all_pages"] = ceil($_SESSION["amount_of_all_messages"] / 2);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +50,6 @@ if ($current_offset == 0) {
             }
             ?>
             <a href='about_us/about_us.php' class='about_link'>About us</a>
-            <a href='about_us/contacts.php' class='about_link'>Contacts</a>
         </div>
     </header>
 
@@ -82,19 +75,21 @@ if ($current_offset == 0) {
 
         <div class="message_block">
             <div class="content_block">
-                <?php getMessageByPage($id_page, $offset); ?>
+                <?php $messages_amount = getMessageByPage($id_page, $offset); ?>
             </div>
 
             <div class="pagination">
                 <?php
-                if ($current_offset != 0) {
+                if ($messages_amount != 0 && $current_offset != 0) {
                     $offset_to_pass = $current_offset - 1;
                     echo "<a href='index.php?id_page=$id_page&offset=$offset_to_pass' class='pagination_link'><span class='previous'><- Previous</span></a>";
                 } else {
                     echo "<div class='empty_link'></div>";
                 }
 
-                showPagination("index.php?id_page", $id_page, $current_offset + 1);
+                if ($messages_amount != 0){
+                    showPagination("index.php?id_page", $id_page, $current_offset + 1);
+                }
 
                 if ($offset + 2 < $_SESSION["amount_of_all_messages"]) {
                     $offset_to_pass = $current_offset + 1;

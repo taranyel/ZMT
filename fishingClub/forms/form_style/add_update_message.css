@@ -84,3 +84,11 @@ form {
 .content {
     height: unset;
 }
+
+@media print {
+
+    .add_message {
+        width: 86%;
+        margin-top: 20px;
+    }
+}

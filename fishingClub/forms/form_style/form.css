@@ -58,6 +58,10 @@ input {
     transition: 0.5s;
 }
 
+.screen_email {
+    height: 250px;
+}
+
 .options {
     background-color: #7F0A71;
     height: 60px;

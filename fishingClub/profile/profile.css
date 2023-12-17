@@ -267,4 +267,28 @@ input:checked ~ .checkmark:after {
     .info_block {
         width: 78%;
     }
+
+    .role_block {
+        margin-top: 30px;
+    }
+
+    .main_label_text {
+        margin-left: 30px;
+    }
+
+    .user_block {
+        margin-left: 30px;
+    }
+
+    #go_to_messages span {
+        margin-left: 20px;
+    }
+
+    #change_role_text {
+        height: 100px;
+    }
+
+    #change_role_text span {
+        width: 170px;
+    }
 }

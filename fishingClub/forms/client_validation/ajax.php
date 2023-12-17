@@ -3,26 +3,31 @@ include "../../assets/connection.php";
 include "../../assets/user_functions.php";
 
 connection();
+echo giveResponse();
 
-$result = file_get_contents("php://input");
-if (!empty($_GET["username"])){
-    $data = $_GET["username"];
+/**
+ * @return string
+ */
+function giveResponse(): string
+{
+    $result = "invalid";
+    if (!empty($_GET["username"])) {
+        $data = $_GET["username"];
 
-    if (!isUsernameAvailable($data)) {
-        echo "invalid";
-    } else {
-        echo "valid";
+        if (isUsernameAvailable($data)) {
+            $result = "valid";
+        }
+
+    } elseif (!empty($_GET["email"])) {
+        $data = $_GET["email"];
+
+        if (isEmailAvailable($data)) {
+            $result = "valid";
+        }
     }
-
-} elseif (!empty($_GET["email"])){
-    $data = $_GET["email"];
-
-    if (!isEmailAvailable($data)) {
-        echo "invalid";
-    } else {
-        echo "valid";
-    }
+    return $result;
 }
+
 
 
 

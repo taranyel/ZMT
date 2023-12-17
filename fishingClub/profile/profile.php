@@ -6,26 +6,31 @@ include_once "../assets/page_functions.php";
 connection();
 session_start();
 
-$id_user = $_GET["id_user"];
-validateDigitGetParam(strval($id_user));
+$id_user = "";
 
-$error[0] = "";
-$error[1] = "";
-$error[2] = "";
-$error[3] = "";
+if (!isset($_GET["id_user"]) || empty($_GET["id_user"])) {
+    if (isset($_SESSION["id_user"])){
+        $_GET["id_user"] = $_SESSION["id_user"];
+    } else {
+        header("location: ../index.php?id_page=5&offset=0");
+    }
+}
+
+$id_user = validateIdUserMessageParam(strval($_GET["id_user"]));
+
+$error = ["", "", ""];
 
 $data = mysqli_fetch_array(getUserDetails($id_user));
+
 if ($data) {
     $name = $data["name"];
     $surname = $data["surname"];
-    $email = $data["email"];
     $username = $data["username"];
     $role = $data["role"];
 } else {
     $name = "";
     $surname = "";
     $role = "";
-    $email = "";
     $username = "";
 }
 
@@ -34,7 +39,6 @@ if (isset($_POST["save"])) {
 
     $name = htmlspecialchars($_POST["name"]);
     $surname = htmlspecialchars($_POST["surname"]);
-    $email = htmlspecialchars($_POST["email"]);
     $username = htmlspecialchars($_POST["username"]);
 
     if ($error == []) {
@@ -49,7 +53,14 @@ if (isset($_POST["save"])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title><?php echo "$data[name] $data[surname]" ?></title>
+    <title><?php
+        if ($data){
+            echo "$name $surname";
+        } else {
+            echo "Not existing user";
+        }
+        ?>
+        </title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../page.css">
     <link rel="stylesheet" href="profile.css">
@@ -77,7 +88,6 @@ if (isset($_POST["save"])) {
             }
             ?>
             <a href='../about_us/about_us.php' class='about_link'>About us</a>
-            <a href='../about_us/contacts.php' class='about_link'>Contacts</a>
         </div>
     </header>
 
@@ -90,104 +100,104 @@ if (isset($_POST["save"])) {
             <a href="../index.php?id_page=4&offset=0" class='nav_link'>Photo gallery</a>
         </div>
         <div class="info_block">
-            <div class="role_block">
-                <label class="main_label" id="info_label">
-                    <span class="main_label_text">Personal information:</span>
-                </label>
+            <?php
+                if ($data) {
+                    echo "
+                        <div class='role_block'>
+                            <label class='main_label' id='info_label'>
+                                <span class='main_label_text'>Personal information:</span>
+                            </label>
 
-                <div class="role">
-                    <label class="container">Administrator
-                        <input type="radio" name="role" <?php if ($role == "admin") {
-                            echo "checked";
-                        } ?>
-                               disabled>
-                        <span class="checkmark"></span>
-                    </label>
+                            <div class='role'>
+                                <label class='container'>Administrator";
+                                     if ($role == 'admin') {
+                                        echo "<input type='radio' name='role' checked disabled>";
+                                    } else {
+                                         echo "<input type='radio' name='role' disabled>";
+                                     }
+                                       echo "    
+                                    <span class='checkmark'></span>
+                                </label>
+            
+                                <label class='container'>User";
+                                     if ($role != "admin") {
+                                        echo "<input type='radio' name='role' value='user' checked disabled>";
+                                    } else {
+                                         echo "<input type='radio' name='role' value='user' disabled>";
+                                     }
+                                      echo"    
+                                    <span class='checkmark'></span>
+                                </label>";
 
-                    <label class="container">User
-                        <input type="radio" name="role" value="user" <?php if ($role != "admin") {
-                            echo "checked";
-                        } ?>
-                               disabled>
-                        <span class="checkmark"></span>
-                    </label>
-                    <?php
-                    if (!empty($_SESSION["admin"])) {
-                        echo "<a href='../assets/change_role.php?id_user=$id_user&role=$role'
-                        class='profile_button' id='change_role'>Change role</a>";
-                    }
-                    if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
-                        echo " <button type='button' id='change_info'>i</button>";
-                    }
-                    ?>
-                </div>
+                                if (!empty($_SESSION["admin"])) {
+                                    echo "<a href='../assets/change_role.php?id_user=$id_user&role=$role'
+                                    class='profile_button' id='change_role'>Change role</a>";
+                                }
+                                if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
+                                    echo " <button type='button' id='change_info'>i</button>";
+                                }
+                            echo "</div>
+                        </div>
+            
+                        <div class='personal_info_block'>
+                            <div class='user_block'>
+                                <form action='profile.php?id_user=$id_user' method='post'>
+                                    <label>Name:
+                                        <input type='text' class='info_text' name='name' id='edit_name'
+                                               value='$name'
+                                               minlength='2' maxlength='100' readonly required>
+                                    </label>
+                                    <div class='response'>$error[0]</div>
+            
+                                    <label>Surname:
+                                        <input type='text' class='info_text' name='surname' id='edit_surname'
+                                               value='$surname' minlength='2' maxlength='100' readonly required>
+                                    </label>
+                                    <div class='response'>$error[1]</div>
+            
+                                    <label>Username:
+                                        <input type='text' class='info_text' name='username' id='edit_username'
+                                               value='$username' minlength='4' maxlength='100' readonly required>
+                                    </label>
+                                    <div class='response'>$error[2]</div>
+            
+                                    <label id='edit_submit'></label>
+                                </form> ";
 
-            </div>
-            <div class="personal_info_block">
-                <div class="user_block">
-                    <form action='profile.php?id_user=<?php echo $id_user ?>' method='post'>
-                        <label>Name:
-                            <input type='text' class='info_text' name='name' id='edit_name'
-                                   value='<?php echo $name ?>'
-                                   minlength="2" maxlength="100" readonly required>
-                        </label>
-                        <div class="response"><?php echo $error[0] ?></div>
+                            if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
+                                echo "
+                                    <div class='personal_link'>
+                                        <button class='profile_button' id='edit_profile'>Edit my profile</button>
+                                        <script src='edit_profile.js'></script>
+                                        
+                                        <a href='../forms/form/change_password.php' class='profile_button'>Change password</a>
+                                        <a href='../forms/form/change_email.php' class='profile_button'>Change email</a>
+                                        <a href='../forms/form/add_update_message.php' class='profile_button' id='add_message_button'>Add article</a>
+                                    </div>";
+                            }
+                            echo "</div>";
 
-                        <label>Surname:
-                            <input type='text' class='info_text' name='surname' id='edit_surname'
-                                   value='<?php echo $surname ?>' minlength="2" maxlength="100" readonly required>
-                        </label>
-                        <div class="response"><?php echo $error[1] ?></div>
-
-                        <label id="email">Email:
-                            <input type='text' class='info_text' name='email' id='edit_email'
-                                   value='<?php echo $email ?>'
-                                   minlength="4" maxlength="100" readonly required>
-                        </label>
-                        <div class="response"><?php echo $error[2] ?></div>
-
-
-                        <label>Username:
-                            <input type='text' class='info_text' name='username' id='edit_username'
-                                   value='<?php echo $username ?>' minlength="4" maxlength="100" readonly required>
-                        </label>
-                        <div class="response"><?php echo $error[3] ?></div>
-
-                        <label id='edit_submit'></label>
-                    </form>
-
-                    <?php if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
-                        echo "
-                        <div class='personal_link'>
-                            <button class='profile_button' id='edit_profile'>Edit my profile</button>
-                            <script src='edit_profile.js'></script>
-                            
-                            <a href='../forms/form/change_password.php' class='profile_button'>Change password</a>
-                            <a href='../forms/form/add_update_message.php' class='profile_button' id='add_message_button'>Add article</a>
-                        </div>";
-                    }
-                    ?>
-                </div>
-                <?php
-                if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
-                    echo "<div id='change_role_text'></div>";
-                    echo "<script src='change_role_info.js'></script>";
-                }
-                ?>
-            </div>
-
-            <div class="articles_link">
-                <a id="go_to_messages"
-                   href="user_messages.php?id_user=<?php echo $id_user ?>&offset=0"><span class="profile_button" >
-                        <?php
                         if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
-                            echo "Go to my articles";
-                        } else {
-                            echo "Go to user articles";
-                        } ?>
-                    </span>
-                </a>
-            </div>
+                            echo "<div id='change_role_text'></div>";
+                            echo "<script src='change_role_info.js'></script>";
+                        }
+                        echo "</div>
+
+                        <div class='articles_link'>
+                            <a id='go_to_messages'
+                               href='user_messages.php?id_user=$id_user&offset=0'><span class='profile_button'>";
+                            if (!empty($_SESSION["id_user"]) && ($_SESSION["id_user"] == $id_user)) {
+                                echo "Go to my articles";
+                            } else {
+                                echo "Go to user articles";
+                            }
+                            echo " </span>
+                            </a>
+                        </div>";
+            } else {
+                echo "<span class='no_messages'>This user does not exist or was deleted :(</span>";
+            }
+            ?>
         </div>
     </div>
 

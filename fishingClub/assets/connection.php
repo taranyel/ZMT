@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * <p>The <b>connection()</b> function connects to the database and terminates all processes in case of connection failure.</p>
+ * @return void
+ */
 function connection(): void
 {
     global $connection;

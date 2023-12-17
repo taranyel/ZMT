@@ -6,11 +6,21 @@ include_once "../../assets/page_functions.php";
 connection();
 session_start();
 
-$id_user = $_GET["id_user"];
-validateDigitGetParam(strval($id_user));
+if (!isset($_GET["id_user"]) || empty($_GET["id_user"])) {
+    header("location: ../../index.php?id_page=5&offset=0");
+}
 
-deleteUser($id_user);
+$id_user = validateIdUserMessageParam(strval($_GET["id_user"]));
 
-session_unset();
-session_destroy();
+$user = mysqli_fetch_array(getUserDetails($id_user));
+if (!$user) {
+    header("location: ../../index.php?id_page=5&offset=0");
+}
+
+if (isset($_SESSION["id_user"]) && ($id_user == $_SESSION["id_user"] || isset($_SESSION["admin"]))) {
+    deleteUser($id_user);
+    session_unset();
+    session_destroy();
+}
 header("location: ../../index.php?id_page=5&offset=0");
+

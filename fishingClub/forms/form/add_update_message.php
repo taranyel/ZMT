@@ -11,13 +11,25 @@ $error = ["", "", ""];
 if (isset($_GET["id_message"])) {
     $action = "Edit message";
 
-    $id_user = $_GET["id_user"];
-    $id_message = $_GET["id_message"];
+    if (!isset($_GET["id_user"])) {
+        if (!isset($_SESSION["admin"])){
+            header("location: ../../index.php?id_page=5&offset=0");
+        }
+    }
 
-    validateDigitGetParam(strval($id_user));
-    validateDigitGetParam(strval($id_message));
+    $id_user = validateIdUserMessageParam(strval($_GET["id_user"]));
+    $id_message = validateIdUserMessageParam(strval($_GET["id_message"]));
+
+    if (!isset($_SESSION["id_user"]) || ($id_user != $_SESSION["id_user"] && !isset($_SESSION["admin"]))) {
+        header("location: ../../index.php?id_page=5&offset=0");
+    }
 
     $message = mysqli_fetch_array(getMessageDetails($id_message));
+
+    if (!$message) {
+        header("location: ../../index.php?id_page=5&offset=0");
+    }
+
     $tmp_title = $message["name"];
     $tmp_content = $message["content"];
 
@@ -33,6 +45,11 @@ if (isset($_GET["id_message"])) {
     }
 
 } else {
+
+    if (!isset($_SESSION["id_user"])) {
+        header("location: ../../index.php?id_page=5&offset=0");
+    }
+
     $action = "Add message";
 
     $tmp_title = "";
@@ -54,7 +71,7 @@ if (isset($_GET["id_message"])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title><?php echo $action?></title>
+    <title><?php echo $action ?></title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../page.css">
     <link rel="stylesheet" href="../form_style/add_update_message.css">
@@ -74,7 +91,6 @@ if (isset($_GET["id_message"])) {
             }
             ?>
             <a href='../../about_us/about_us.php' class='about_link'>About us</a>
-            <a href='../../about_us/contacts.php' class='about_link'>Contacts</a>
         </div>
     </header>
 
@@ -106,14 +122,14 @@ if (isset($_GET["id_message"])) {
 
                     <div class='add_field'>
                         <label>Title: <span class="required">*</span>
-                            <input type="text" name="title"  class="add_title" value="<?php echo $tmp_title ?>" >
+                            <input type="text" name="title" class="add_title" value="<?php echo $tmp_title ?>" minlength="2" maxlength="30" required>
                         </label>
                         <div class="message_response"><?php echo $error[0] ?></div>
                     </div>
 
                     <div class='add_field'>
-                        <label >Text: <span class="required">*</span>
-                            <textarea name="message" rows="10" cols="20" class="add_content"  ><?php echo $tmp_content ?></textarea>
+                        <label>Text: <span class="required">*</span>
+                            <textarea name="message" rows="10" cols="20" class="add_content" minlength="2" maxlength="20000"><?php echo $tmp_content ?></textarea>
                         </label>
                         <div class="message_response"><?php echo $error[1] ?></div>
                     </div>

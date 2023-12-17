@@ -1,5 +1,12 @@
 <?php
 include "server_validation.php";
+
+/**
+ * <p>The <b>addUser()</b> function gets and validates user data from <b>$_POST</b> variable.
+ *  Then if validation successfully passed, function adds new user to the database.</p>
+ * @return array <p>
+ * The <b>addUser()</b> function must return an array of errors, which were discovered during validation.</p>
+ */
 function addUser(): array
 {
     global $connection;
@@ -42,6 +49,12 @@ function addUser(): array
     return [];
 }
 
+/**
+ * <p>The <b>updateName()</b> function updates user's name in the database.</p>
+ * @param string $newName <p>is a new user's name, which function must update in database.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function updateName(string $newName, int $id_user): void
 {
     global $connection;
@@ -49,6 +62,12 @@ function updateName(string $newName, int $id_user): void
     mysqli_query($connection, $query);
 }
 
+/**
+ * <p>The <b>updateSurname()</b> function updates user's surname in the database.</p>
+ * @param string $newSurname <p>is a new user's surname, which function must update in database.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function updateSurname(string $newSurname, int $id_user): void
 {
     global $connection;
@@ -56,6 +75,12 @@ function updateSurname(string $newSurname, int $id_user): void
     mysqli_query($connection, $query);
 }
 
+/**
+ * <p>The <b>updateEmail()</b> function updates user's email in the database.</p>
+ * @param string $newEmail <p>is a new user's email, which function must update in database.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function updateEmail(string $newEmail, int $id_user): void
 {
     global $connection;
@@ -63,6 +88,12 @@ function updateEmail(string $newEmail, int $id_user): void
     mysqli_query($connection, $query);
 }
 
+/**
+ * <p>The <b>updateUsername()</b> function updates user's username in the database.</p>
+ * @param string $newUsername <p>is a new user's username, which function must update in database.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function updateUsername(string $newUsername, int $id_user): void
 {
     global $connection;
@@ -70,6 +101,12 @@ function updateUsername(string $newUsername, int $id_user): void
     mysqli_query($connection, $query);
 }
 
+/**
+ * <p>The <b>updatePassword()</b> function updates user's password in the database.</p>
+ * @param string $newPassword <p>is a new user's password, which function must update in database.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function updatePassword(string $newPassword, int $id_user): void
 {
     global $connection;
@@ -77,29 +114,63 @@ function updatePassword(string $newPassword, int $id_user): void
     mysqli_query($connection, $query);
 }
 
-function updateUserPrepare(): array
+/**
+ * <p>This function checks if user's new email is valid with and if validation successfully passed,
+ * gets user email from <b>$_GET</b> variable and updates it in the
+ *  database with function <b>updateEmail()</b>.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return string <p>
+ *    The <b>changePasswordPrepare()</b> function must return an email error, which was discovered during validation.</p>
+ */
+function changeEmail(int $id_user): string
 {
     global $connection;
     $user = mysqli_fetch_array(getUserDetails($_SESSION["id_user"]));
 
-    $error[0] = isNameValid(mysqli_real_escape_string($connection, $_POST["name"]));
-    $error[1] = isNameValid(mysqli_real_escape_string($connection, $_POST["surname"]));
-
-    $newEmail = mysqli_real_escape_string($connection, $_POST["email"]);
-    $error[2] = isEmailValid($newEmail);
-    if (($newEmail != $user["email"]) && ($error[2] == "") && !isEmailAvailable($newEmail)) {
-        $error[2] = "Email is already in use!";
+    $newEmail = mysqli_real_escape_string($connection, $_GET["email"]);
+    $error = isEmailValid($newEmail);
+    if (($newEmail != $user["email"]) && ($error == "") && !isEmailAvailable($newEmail)) {
+        $error = "Email is already in use!";
     }
 
-    $newUsername = mysqli_real_escape_string($connection, $_POST["username"]);
-    $error[3] = isUsernameValid($newUsername);
-    if (($newUsername != $user["username"]) && ($error[3] == "") && !isUsernameAvailable($newUsername)) {
-        $error[3] = "Username is already taken!";
+    if ($error == "") {
+        if (!empty($_GET["email"])) {
+            updateEmail(mysqli_real_escape_string($connection, $_GET["email"]), $id_user);
+        }
     }
 
     return $error;
 }
 
+/**
+ * <p>The <b>updateUserPrepare()</b> function gets and validates user's new data (except password) from <b>$_POST</b> variable.
+ * This function is used in user info updating function.</p>
+ * @return array <p>
+ *  The <b>updateUserPrepare()</b> function must return an array of errors, which were discovered during validation.</p>
+ */
+function updateUserPrepare(int $id_user): array
+{
+    global $connection;
+    $user = mysqli_fetch_array(getUserDetails($id_user));
+
+    $error[0] = isNameValid(mysqli_real_escape_string($connection, $_POST["name"]));
+    $error[1] = isNameValid(mysqli_real_escape_string($connection, $_POST["surname"]));
+
+    $newUsername = mysqli_real_escape_string($connection, $_POST["username"]);
+    $error[2] = isUsernameValid($newUsername);
+    if (($newUsername != $user["username"]) && ($error[2] == "") && !isUsernameAvailable($newUsername)) {
+        $error[2] = "Username is already taken!";
+    }
+
+    return $error;
+}
+
+/**
+ * <p>The <b>changePasswordPrepare()</b> function gets and validates user's new passwords from <b>$_POST</b> variable.
+ * This function is used in user password updating method.</p>
+ * @return array <p>
+ *   The <b>changePasswordPrepare()</b> function must return an array of errors, which were discovered during validation.</p>
+ */
 function changePasswordPrepare(): array
 {
     global $connection;
@@ -119,6 +190,14 @@ function changePasswordPrepare(): array
     return $error;
 }
 
+/**
+ * <p>This function checks if user's new password is valid with helper function <b>changePasswordPrepare()</b> and
+ * if validation successfully passed, gets user password from <b>$_POST</b> variable and updates it in the
+ * database with function <b>updatePassword()</b>.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return array <p>
+ *    The <b>changePassword)</b> function must return an array of errors, which were discovered during validation.</p>
+ */
 function changePassword(int $id_user): array
 {
     global $connection;
@@ -143,15 +222,22 @@ function changePassword(int $id_user): array
     return [];
 }
 
+/**
+ * <p>This function checks if user's new data is valid with helper function <b>updateUserPrepare()</b> and
+ * if validation successfully passed, gets user's data from <b>$_POST</b> variable and updates it in the
+ * database with data update functions.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return array <p>
+ *     The <b>updateUser()</b> function must return an array of errors, which were discovered during validation.</p>
+ */
 function updateUser(int $id_user): array
 {
-
     global $connection;
 
-    $error = updateUserPrepare();
+    $error = updateUserPrepare($id_user);
     $flag = true;
 
-    for ($i = 0; $i < 4; $i++) {
+    for ($i = 0; $i < 3; $i++) {
         if ($error[$i] != "") {
             $flag = false;
         }
@@ -164,9 +250,6 @@ function updateUser(int $id_user): array
         if (!empty($_POST["surname"])) {
             updateSurname(mysqli_real_escape_string($connection, $_POST["surname"]), $id_user);
         }
-        if (!empty($_POST["email"])) {
-            updateEmail(mysqli_real_escape_string($connection, $_POST["email"]), $id_user);
-        }
         if (!empty($_POST["username"])) {
             updateUsername(mysqli_real_escape_string($connection, $_POST["username"]), $id_user);
         }
@@ -178,6 +261,11 @@ function updateUser(int $id_user): array
     return [];
 }
 
+/**
+ * <p>The <b>deleteUser()</b> function deletes user articles and user according to its id.</p>
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return void
+ */
 function deleteUser(int $id_user): void
 {
     global $connection;
@@ -187,6 +275,12 @@ function deleteUser(int $id_user): void
     mysqli_query($connection, $query);
 }
 
+/**
+ * <p>The <b>login()</b> function checks if user entered valid data to login form.
+ * If validation passed, function logs in current user and fills <b>$_SESSION["id_user"]</b> parameter.</p>
+ * @return array <p>
+ *      The <b>login()</b> function must return an array of errors, which were discovered during validation.</p>
+ */
 function login(): array
 {
     global $connection;
@@ -210,15 +304,15 @@ function login(): array
         }
     }
 
-    if (strlen($email) == 0){
+    if (strlen($email) == 0) {
         $error[0] = "You must fill this field!";
     }
 
-    if (strlen($password) == 0){
+    if (strlen($password) == 0) {
         $error[1] = "You must fill this field!";
     }
 
-    if ($error[0] != "" || $error[1] != ""){
+    if ($error[0] != "" || $error[1] != "") {
         return $error;
     }
 
@@ -231,6 +325,12 @@ function login(): array
     return [];
 }
 
+/**
+ * <p>The <b>isUsernameAvailable()</b> function checks if given username is unique.</p>
+ * @param string $username <p>is username entered by user.</p>
+ * @return bool <p>
+ *     Returns <i>true</i> if given username is unique.</p>
+ */
 function isUsernameAvailable(string $username): bool
 {
     global $connection;
@@ -247,6 +347,12 @@ function isUsernameAvailable(string $username): bool
     return true;
 }
 
+/**
+ * <p>The <b>isEmailAvailable()</b> function checks if given email is not already in database (in use).</p>
+ * @param string $email <p>is email entered by user.</p>
+ * @return bool <p>
+ *      Returns <i>true</i> if given email is not already in database.</p>
+ */
 function isEmailAvailable(string $email): bool
 {
     global $connection;
@@ -263,6 +369,11 @@ function isEmailAvailable(string $email): bool
     return true;
 }
 
+/**
+ * @param int $id_user <p>is current user's unique id.</p>
+ * @return mysqli_result <p>
+ * The <b>getUserDetails()</b> function returns all user data from database.</p>
+ */
 function getUserDetails(int $id_user): mysqli_result
 {
     global $connection;

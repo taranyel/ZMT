@@ -39,7 +39,6 @@ if (isset($_POST["login"])) {
 
         <div class="header_links_block">
             <a href='../../about_us/about_us.php' class='about_link'>About us</a>
-            <a href='../../about_us/contacts.php' class='about_link'>Contacts</a>
         </div>
     </header>
 
@@ -56,14 +55,14 @@ if (isset($_POST["login"])) {
                     <div class="input__field">
                         <label>*
                             <input type="email" name="email" placeholder="Email"
-                                   value="<?php echo $tmp_email?>" minlength="4" maxlength="100" required>
+                                   value="<?php echo $tmp_email?>" minlength="4" maxlength="50" required>
                         </label>
                         <div class="response"><?php echo $error[0]?></div>
                     </div>
 
                     <div class="input__field">
                         <label>*
-                            <input type="password" name="password" placeholder="Password" required>
+                            <input type="password" name="password" placeholder="Password" minlength="8" maxlength="100" required>
                         </label>
                         <div class="response"><?php echo $error[1]?></div>
                     </div>

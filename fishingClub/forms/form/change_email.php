@@ -7,17 +7,20 @@ connection();
 session_start();
 
 $id_user = "";
-$error = ["", ""];
+$error = "";
+$tmp_email = "";
 
 if (!isset($_SESSION["id_user"])) {
     header("location: ../../index.php?id_page=5&offset=0");
 } else {
     $id_user = $_SESSION["id_user"];
+    $tmp_email = mysqli_fetch_array(getUserDetails($id_user))["email"];
 
-    if (isset($_POST["save"])) {
-        $error = changePassword($id_user);
+    if (isset($_GET["save"])) {
+        $tmp_email = htmlspecialchars($_GET["email"]);
+        $error = changeEmail($id_user);
 
-        if ($error == []){
+        if ($error == ""){
             header("location: ../../profile/profile.php?id_user=$id_user");
         }
     }
@@ -27,7 +30,7 @@ if (!isset($_SESSION["id_user"])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Change password</title>
+    <title>Change email</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../page.css">
     <link rel="stylesheet" href="../form_style/form.css">
@@ -50,31 +53,25 @@ if (!isset($_SESSION["id_user"])) {
     </header>
 
     <div class="form_content">
-        <div class="screen_password">
+        <div class="screen_email">
 
             <div class="options">
-                <span class="option_link">Change password</span>
+                <span class="option_link">Change email</span>
             </div>
 
             <div class="screen__content">
-                <form class="form" action="change_password.php" method="post">
+                <form class="form" action="change_email.php" method="get">
                     <div class="input__field">
-                        <label for="password">*</label>
-                        <input type="password" class="input" id="password" name="password" placeholder="New password" minlength="8" maxlength="100" required>
-                        <div class="response" id="password_response"><?php echo $error[0]?></div>
-                    </div>
-
-                    <div class="input__field">
-                        <label for="confirm_password">*</label>
-                        <input type="password" class="input" id="confirm_password" name="confirm_password" placeholder="Repeat your password" minlength="8" maxlength="100" required>
-                        <div class="response" id="conf_password_response"><?php echo $error[1]?></div>
+                        <label for="email">*</label>
+                        <input type="email" class="input" id="email" name="email" placeholder="New email" value="<?php echo $tmp_email?>" minlength="4" maxlength="70" required>
+                        <div class="response" id="email_response"><?php echo $error?></div>
                     </div>
 
                     <button class="form__submit" id="form__submit" type="submit" name="save">
                         <span class="button__text">Save</span>
                     </button>
                 </form>
-                <script src="../client_validation/compare_passwords.js"></script>
+                <script src="../client_validation/check_email.js"></script>
             </div>
         </div>
     </div>

@@ -1,4 +1,15 @@
 <?php
+
+/**
+ * <p>The <b>isUserValid()</b> function collects validation results from another functions, which
+ * validate user data.</p>
+ * @param string $name <p>is given user name.</p>
+ * @param string $surname <p>is given user surname.</p>
+ * @param string $email <p>is given user email.</p>
+ * @param string $username <p>is given user username.</p>
+ * @return array <p>
+ * Function must return an array of errors, which were discovered during validation.</p>
+ */
 function isUserValid(string $name, string $surname, string $email, string $username): array
 {
     $error[0] = isNameValid($name);
@@ -9,6 +20,12 @@ function isUserValid(string $name, string $surname, string $email, string $usern
     return $error;
 }
 
+/**
+ * <p>The <b>isEmailValid()</b> function validates given email.</p>
+ * @param string $email <p>is given email.</p>
+ * @return string <p>
+ *  Function must return detected email error.</p>
+ */
 function isEmailValid(string $email): string
 {
     $emailErr = "";
@@ -20,6 +37,12 @@ function isEmailValid(string $email): string
     return $emailErr;
 }
 
+/**
+ * <p>The <b>isNameValid()</b> function validates given name.</p>
+ * @param string $name <p>is given name.</p>
+ * @return string <p>
+ *   Function must return detected name error.</p>
+ */
 function isNameValid(string $name): string
 {
     $nameErr = "";
@@ -33,6 +56,12 @@ function isNameValid(string $name): string
     return $nameErr;
 }
 
+/**
+ * <p>The <b>isUsernameValid()</b> function validates given username.</p>
+ * @param string $username <p>is given name.</p>
+ * @return string <p>
+ *    Function must return detected username error.</p>
+ */
 function isUsernameValid(string $username): string
 {
     $usernameErr = "";
@@ -46,6 +75,12 @@ function isUsernameValid(string $username): string
     return $usernameErr;
 }
 
+/**
+ * <p>The <b>isPasswordValid()</b> function validates given password.</p>
+ * @param string $password <p>is given password.</p>
+ * @return string <p>
+ *     Function must return detected password error.</p>
+ */
 function isPasswordValid(string $password): string
 {
     $passwordErr = "";
@@ -54,15 +89,23 @@ function isPasswordValid(string $password): string
     } else if (strlen($password) > 100) {
         $passwordErr = "Maximum 100 characters are allowed!";
     } else if (!preg_match("#[0-9]+#", $password)) {
-        $passwordErr = "At least 1 number are required!";
+        $passwordErr = "At least 1 number is required!";
     } else if (!preg_match("#[A-Z]+#", $password)) {
-        $passwordErr = "At least 1 capital letter are required!";
+        $passwordErr = "At least 1 capital letter is required!";
     } else if (!preg_match("#[a-z]+#", $password)) {
-        $passwordErr = "At least 1 lowercase letter are required!";
+        $passwordErr = "At least 1 lowercase letter is required!";
     }
     return $passwordErr;
 }
 
+/**
+ * <p>The <b>isMessageValid()</b> function collects validation results from another functions, which
+ *  validate article data.</p>
+ * @param string $title <p>is given article title.</p>
+ * @param string $message <p>is given article text.</p>
+ * @return array <p>
+ *  Function must return an array of errors, which were discovered during validation.</p>
+ */
 function isMessageValid(string $title, string $message): array
 {
     $error[0] = isTitleValid($title);
@@ -71,6 +114,12 @@ function isMessageValid(string $title, string $message): array
     return $error;
 }
 
+/**
+ * <p>The <b>isTitleValid()</b> function validates given article title.</p>
+ * @param string $title <p>is given title.</p>
+ * @return string <p>
+ *      Function must return detected article title error.</p>
+ */
 function isTitleValid(string $title): string
 {
     $titleErr = "";
@@ -84,6 +133,12 @@ function isTitleValid(string $title): string
     return $titleErr;
 }
 
+/**
+ * <p>The <b>isTitleValid()</b> function validates given article text.</p>
+ * @param string $message <p>is given article text.</p>
+ * @return string <p>
+ *       Function must return detected article text error.</p>
+ */
 function isContentValid(string $message): string
 {
     $messageErr = "";

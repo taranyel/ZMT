@@ -6,23 +6,24 @@ include_once "../assets/page_functions.php";
 connection();
 session_start();
 
-$id_message = $_GET["id_message"];
-$id_user = $_GET["id_user"];
+if (!isset($_GET["id_message"]) || empty($_GET["id_message"]) || !isset($_GET["id_user"]) || empty($_GET["id_user"])){
+    header("location: ../index.php?id_page=5&offset=0");
+}
 
-validateDigitGetParam(strval($id_message));
-validateDigitGetParam(strval($id_user));
+$id_message = validateIdUserMessageParam(strval($_GET["id_message"]));
+$id_user = validateIdUserMessageParam(strval($_GET["id_user"]));
 
 $message = mysqli_fetch_array(getMessageDetails($id_message));
+$user = mysqli_fetch_array(getUserDetails($id_user));
 
-if ($message) {
+if ($message && $user) {
     $title = htmlspecialchars($message["name"]);
     $content = $message["content"];
     $image = $message["image"];
     $date = $message["date"];
     $id_page = $message["id_page"];
 
-    $page = mysqli_fetch_array(getPageName($id_page))["name"];
-    $user = mysqli_fetch_array(getUserDetails($id_user));
+    $page = getPageName($id_page);
     $username = $user["username"];
 } else {
     $title = "";
@@ -32,7 +33,7 @@ if ($message) {
     $username = "";
     $page = "";
     $id_page = "";
-    header("location: ../profile/profile.php?id_user=$id_user");
+    header("location: ../index.php?id_page=5&offset=0");
 }
 
 ?>
@@ -64,7 +65,6 @@ if ($message) {
             }
             ?>
             <a href='../about_us/about_us.php' class='about_link'>About us</a>
-            <a href='../about_us/contacts.php' class='about_link'>Contacts</a>
         </div>
     </header>
 
@@ -103,10 +103,10 @@ if ($message) {
                 <div class="message_link">
                     <?php
                     if (!empty($_SESSION["admin"]) || (!empty($_SESSION["id_user"]) && $id_user == $_SESSION["id_user"])) {
-                        echo "<a href='../forms/form/add_update_message.php?id_message=$id_message&id_user=$id_user' class='message_button'><span>Edit message</span></a>";
+                        echo "<a href='../forms/form/add_update_message.php?id_message=$id_message&id_user=$id_user' class='message_button'><span>Edit article</span></a>";
                     }
                     if (!empty($_SESSION["admin"]) || ((!empty($_SESSION["id_user"]) && $id_user == $_SESSION["id_user"]))) {
-                        echo "<a href='../forms/delete/delete_message.php?id_message=$id_message' class='message_button'><span>Delete message</span></a>";
+                        echo "<a href='../forms/delete/delete_message.php?id_message=$id_message' class='message_button'><span>Delete article</span></a>";
                     }
                     ?>
                 </div>

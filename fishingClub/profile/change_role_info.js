@@ -3,6 +3,9 @@ const change_role_info = document.getElementById("change_role_text");
 
 change_info_button.addEventListener("click", show_hide_text);
 
+/**
+ * <p>Function shows and hides change role information block by adding and removing this block from HTML.</p>
+ */
 function show_hide_text() {
     const info = document.getElementById("info");
     if (info){
